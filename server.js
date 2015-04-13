@@ -77,7 +77,7 @@ userRoute.get(function(req, res){
         }
         else{
             if(users.length == 0){
-                res.status(404)
+                res.status(404);
                 res.json(compRetMsg("not found",users));
             }
             else{
@@ -91,20 +91,29 @@ userRoute.get(function(req, res){
 
 userRoute.post(function(req, res){
     var a = new User(req.body);
-    //console.log(a);
-    a.save(function(err, data){
-        if(err){
-            console.log(err);
-            res.send(err);
-        }
-        else{
-            //console.log("save success!");
-            res.status(201);
-            var msg = "user added"
-            res.send(compRetMsg(msg, data));
-        }
-    });
+    console.log(req.body);
+
+    if(a.name =="" || a.email ==""){
+        //res.status(500);
+        res.send(compRetMsg("validate error: please fill required fields!"));
+    }
+    else {
+        console.log(a);
+        a.save(function (err, data) {
+            if (err) {
+                console.log(err);
+                res.send(err);
+            }
+            else {
+                //console.log("save success!");
+                res.status(201);
+                var msg = "user added";
+                res.send(compRetMsg(msg, data));
+            }
+        });
+    }
 });
+
 
 
 
@@ -194,20 +203,25 @@ taskRoute.get(function(req, res){
 });
 
 taskRoute.post(function(req, res){
-    var a = new Task();
-    a.name=req.body.name;
-    a.email=req.body.email;
-    a.save(function(err, tasks){
-        if(err){
-            res.send(compRetMsg("task post error", tasks));
-        }
-        else{
-            var msg = "tasks added";
-            res.status(201);
-            res.send(compRetMsg(msg, tasks));
-        }
-    });
-
+    var a = new Task(req.body);
+    a.name = req.body.name;
+    a.deadline = req.body.deadline;
+    if(a.name!="" || a.deadline!=""){
+        //res.status(500);
+        res.send("validation error, make sure you set required fields!");
+    }
+    else {
+        a.save(function (err, tasks) {
+            if (err) {
+                res.send(compRetMsg("task post error", tasks));
+            }
+            else {
+                var msg = "tasks added";
+                res.status(201);
+                res.send(compRetMsg(msg, tasks));
+            }
+        });
+    }
 });
 
 //taskRoute.post(function(req,res){
